@@ -128,7 +128,22 @@ exports.Prisma.UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   password: 'password',
-  idUserCat: 'idUserCat'
+  idUserCat: 'idUserCat',
+  avatar: 'avatar'
+};
+
+exports.Prisma.GroupScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  creatorId: 'creatorId'
+};
+
+exports.Prisma.PrivateMessageScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  createdAt: 'createdAt',
+  senderId: 'senderId',
+  receiverId: 'receiverId'
 };
 
 exports.Prisma.FactureElementScalarFieldEnum = {
@@ -144,8 +159,36 @@ exports.Prisma.FactureScalarFieldEnum = {
   date: 'date',
   titre: 'titre',
   total: 'total',
+  categorie: 'categorie',
   state: 'state',
   userId: 'userId'
+};
+
+exports.Prisma.ItemSolaireScalarFieldEnum = {
+  id: 'id',
+  intitule: 'intitule',
+  image: 'image'
+};
+
+exports.Prisma.PackScalarFieldEnum = {
+  id: 'id',
+  intitule: 'intitule'
+};
+
+exports.Prisma.FileGroupScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.FileScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  mimeType: 'mimeType',
+  size: 'size',
+  data: 'data',
+  createdAt: 'createdAt',
+  groupId: 'groupId'
 };
 
 exports.Prisma.SortOrder = {
@@ -158,12 +201,23 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
 
 exports.Prisma.ModelName = {
   UserCategorie: 'UserCategorie',
   User: 'User',
+  Group: 'Group',
+  PrivateMessage: 'PrivateMessage',
   FactureElement: 'FactureElement',
-  Facture: 'Facture'
+  Facture: 'Facture',
+  ItemSolaire: 'ItemSolaire',
+  Pack: 'Pack',
+  FileGroup: 'FileGroup',
+  File: 'File'
 };
 
 /**

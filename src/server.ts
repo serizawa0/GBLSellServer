@@ -8,7 +8,9 @@ import Gravityrouter from './routes/Gravity';
 import User from './classes/User';
 import Panier from './classes/Panier';
 import SolaireRouter from './routes/Solaire';
-import Gblrouter from './routes/GBL';
+import Gblrouter, { disconnect, getUsersConnected, registerUserConnected } from './routes/GBL';
+import PrivateMessage from './classes/PrivateMessage';
+import { subPrivateMessage } from './controllers/subControllers/ChatController';
 
 
 
@@ -20,8 +22,6 @@ const PORT = 3000;
 // Middleware
 app.use(express.json());
 app.use(cors());
-
-// Servir les images depuis un dossier "images"
 
 const users:User[] = []
 
@@ -42,23 +42,34 @@ const io = new SocketIOServer(server, {
   io.on('connection', (socket:Socket) => {
     console.log(`✅ Client connecté : ${socket.id}`);
   
-    socket.on('register', (userId: string) => {
-      users.push({ userId, socketId: socket.id });
+    socket.on('register', (userId: number) => {
+      registerUserConnected({userId:userId,socketId: socket.id})
+      // users.push({ userId, socketId: socket.id });
       console.log(`👤 Utilisateur ${userId} enregistré avec socket ${socket.id}`);
     });
 
-    socket.on('private-message', ({ from, to, message }) => {
-      const target = users.find((u) => u.userId === to);
-      if (target) {
-        io.to(target.socketId).emit('private-message', { from, message });
-        console.log(`📩 ${from} → ${to}: ${message}`);
-      }
-    });
 
     socket.on('message', (data) => {
       console.log(`📨 Message reçu :`, data);
       // Exemple : émettre à tous les clients sauf l’émetteur
-      socket.broadcast.emit('message', data);
+      socket.emit('message', data);
+    });
+
+    socket.on('private-message', (message:PrivateMessage) => {
+      const usrs = getUsersConnected()
+      const target = usrs.find((u) => u.userId === message.senderId);
+      if(target){
+        console.log('sender: '+target.socketId);
+        subPrivateMessage(message).then( data => {
+          socket.emit('newPrivateMessage', data)
+          const receiver = usrs.find((u) => u.userId === message.receiverId);
+          if(receiver){
+            console.log('receiver: '+receiver.socketId);
+            
+            io.to(receiver.socketId).emit('newPrivateMessage', data)
+          }
+        })
+      }
     });
 
     socket.on('gravityCommand', (data:Panier) => {
@@ -69,6 +80,7 @@ const io = new SocketIOServer(server, {
   
     socket.on('disconnect', () => {
       console.log(`❌ Client déconnecté : ${socket.id}`);
+      disconnect(socket.id)
     }); 
   });
 

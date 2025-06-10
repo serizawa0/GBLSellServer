@@ -4,14 +4,15 @@ import FactureElement from "./FactureElement"
 export default class facture{
     id:number
     titre:string
-    demandant:Utilisateur
+    user:Utilisateur
     elements:FactureElement[]
     total:number
     state:string
-    constructor(titre:string, demandant:Utilisateur, elements:FactureElement[]){
+    categorie:string
+    constructor(titre:string, user:Utilisateur, elements:FactureElement[],categorie:string){
         this.id = 0
         this.titre = titre
-        this.demandant = demandant 
+        this.user = user 
         this.elements = elements
         let total  = 0
         this.elements.forEach(element => {
@@ -19,5 +20,6 @@ export default class facture{
         });
         this.total = total
         this.state = 'en attente'
+        this.categorie = categorie
     }
 }

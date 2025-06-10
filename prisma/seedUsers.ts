@@ -18,19 +18,22 @@ async function main() {
             email:'naina@gmail.com',
             name:'Naina',
             idUserCat:4,
-            password:'naina'
+            password:'naina',
+            avatar:'avatar2.jpeg'
         },
         {
             email:'rakotomangatsilavina@gmail.com',
             name:'Serizawa',
             idUserCat:5,
-            password:'serizawa'
+            password:'serizawa',
+            avatar:'avatar1.jpeg'
         },
         {
             email:'hasina@gbline.mg',
             name:'Hasina',
             idUserCat:6,
-            password:'hasina'
+            password:'hasina',
+            avatar:'avatar3.jpeg'
         }
     ]
   })

@@ -22,13 +22,37 @@ model UserCategorie {
 }
 
 model User {
-  id        Int           @id @default(autoincrement())
+  id               Int              @id @default(autoincrement())
+  name             String
+  email            String           @unique
+  password         String
+  idUserCat        Int
+  avatar           String?
+  factures         Facture[]
+  cat              UserCategorie    @relation(fields: [idUserCat], references: [idUserCat])
+  messagesSent     PrivateMessage[] @relation("MessagesSent")
+  messagesReceived PrivateMessage[] @relation("MessagesReceived")
+  groups           Group[]          @relation("UserGroups")
+  createdGroups    Group[]          @relation("GroupCreator")
+}
+
+model Group {
+  id        Int    @id @default(autoincrement())
   name      String
-  email     String        @unique
-  password  String
-  idUserCat Int
-  factures  Facture[]
-  cat       UserCategorie @relation(fields: [idUserCat], references: [idUserCat])
+  users     User[] @relation("UserGroups")
+  creatorId Int
+  creator   User   @relation("GroupCreator", fields: [creatorId], references: [id])
+}
+
+model PrivateMessage {
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
+  senderId   Int
+  receiverId Int
+
+  sender   User @relation("MessagesSent", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("MessagesReceived", fields: [receiverId], references: [id])
 }
 
 model FactureElement {
@@ -41,12 +65,42 @@ model FactureElement {
 }
 
 model Facture {
-  id       Int              @id @default(autoincrement())
-  date     DateTime
-  titre    String
-  elements FactureElement[]
-  total    Int
-  state    String
-  userId   Int
-  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        Int              @id @default(autoincrement())
+  date      DateTime
+  titre     String
+  elements  FactureElement[]
+  total     Int
+  categorie String
+  state     String
+  userId    Int
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ItemSolaire {
+  id       Int    @id @default(autoincrement())
+  intitule String
+  image    String
+}
+
+model Pack {
+  id       Int    @id @default(autoincrement())
+  intitule String
+}
+
+model FileGroup {
+  id        Int      @id @default(autoincrement())
+  name      String
+  files     File[]
+  createdAt DateTime @default(now())
+}
+
+model File {
+  id        Int       @id @default(autoincrement())
+  name      String
+  mimeType  String
+  size      Int
+  data      Bytes
+  createdAt DateTime  @default(now())
+  groupId   Int
+  group     FileGroup @relation(fields: [groupId], references: [id])
 }

@@ -1,8 +1,8 @@
 export default class User{
-    userId:string
+    userId:number
     socketId:string
     constructor(){
         this.socketId = ''
-        this.userId = ''
+        this.userId = 0
     }
 }

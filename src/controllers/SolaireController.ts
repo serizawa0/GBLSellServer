@@ -1,7 +1,14 @@
 import { Request, Response } from "express";
 import PanierSolaire from "../classes/PanierSolaire";
 import { getCommandsFromService,submitCommandonService } from '../services/SolaireService'
+import { PrismaClient } from "../generated/prisma";
 
+const prisma = new PrismaClient()
+
+export const getItems = async () => {
+  const data = await prisma.itemSolaire.findMany()
+  return data
+}
 
 export const getCommands = async (req:Request,res:Response):Promise<Response> => {
     try {

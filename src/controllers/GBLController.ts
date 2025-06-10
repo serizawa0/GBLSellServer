@@ -3,6 +3,7 @@ import Utilisateur from "../classes/Utilisateur";
 import UserCategorie from "../classes/UserCatégorie";
 import { PrismaClient } from "../generated/prisma";
 import Log from "../classes/Log";
+import PrivateMessage from "../classes/PrivateMessage";
 
 const prisma = new PrismaClient()
 
@@ -19,7 +20,8 @@ export const getUsers = async () => {
             id:true,
             name:true,
             email:true,
-            cat:true
+            cat:true,
+            avatar:true
         }
     })
     return userList
@@ -35,7 +37,8 @@ export const logInApp = async (login:Log) => {
                 name:true,
                 email:true,
                 cat:true,
-                password:true
+                password:true,
+                avatar:true
             }
         })
         if(!user){
@@ -50,7 +53,8 @@ export const logInApp = async (login:Log) => {
             id:user.id,
             name:user.name,
             email:user.email,
-            cat:user.cat
+            cat:user.cat,
+            avatar:user.avatar
         }
     } catch (error) {
         return 'error'
@@ -60,4 +64,52 @@ export const logInApp = async (login:Log) => {
 export const submtUser = async (user:Utilisateur) => {
     // users.push(user)
     // return users
+}
+
+export const getGroupsOfUser = async (userId:number) => {
+    const groupes = await prisma.user.findUnique({
+        where:{ id:userId },
+        include:{
+            groups:{
+                include:{
+                    creator:true,
+                    users:true
+                }
+            }
+        }
+    })
+    return groupes?.groups
+}
+
+export const createGroup = async (creatorId:number, name:string) => {
+    const group = await prisma.group.create({
+        data:{
+            name:name,
+            creatorId:creatorId
+        },
+        include:{
+            creator:true,
+        }
+    })
+    return group
+
+}
+
+export const addUsersToGroup = async (groupId:number, ids:number[]) => {
+    await prisma.group.update({
+    where: { id: groupId },
+    data: {
+        users: {
+        connect: ids.map((id) => ({ id })),
+        },
+    },
+    });
+    const groupe =  await prisma.group.findUnique({
+        where:{ id:groupId },
+        include:{
+            creator:true,
+            users:true
+        }
+    })
+    return groupe
 }
