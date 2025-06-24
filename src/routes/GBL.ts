@@ -7,6 +7,7 @@ import User from "../classes/User";
 import { ok } from "assert";
 import { getPrivateMessages } from "../controllers/subControllers/ChatController";
 import Utilisateur from "../classes/Utilisateur";
+import { createProject, getProjects, getProjectTypes } from "../controllers/subControllers/ProjectController";
 
 let users:User[] = []
 
@@ -123,8 +124,27 @@ export default function Gblrouter(io: SocketIOServer) {
         )
     })
 
+    router.get('/getProjectTypes', (req:Request,res:Response) => {
+        getProjectTypes().then(data => {
+            res.json(data)
+        })
+    })
+    router.get('/getProjects', (req:Request,res:Response) => {
+        getProjects().then( data => res.json(data))
+    })
+
+    router.post('/createProject', (req:Request,res:Response)=> {
+        console.log(req.body.typeId+' '+req.body.client);
+        
+        // createProject(req.body.typeId, req.body.client).then(
+        //     data => {
+        //         res.json({data})
+        //     }
+        // )
+    })
+
     router.post('/createFileGroup', (req:Request,res:Response)=> {
-        console.log(req.body);
+        console.log(req.body.data);
         res.json({
             data:'okay'
         })

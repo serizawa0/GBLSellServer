@@ -175,10 +175,23 @@ exports.Prisma.PackScalarFieldEnum = {
   intitule: 'intitule'
 };
 
+exports.Prisma.ProjectTypeScalarFieldEnum = {
+  id: 'id',
+  typeName: 'typeName'
+};
+
+exports.Prisma.ProjectScalarFieldEnum = {
+  id: 'id',
+  client: 'client',
+  typeId: 'typeId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.FileGroupScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  projectId: 'projectId'
 };
 
 exports.Prisma.FileScalarFieldEnum = {
@@ -216,6 +229,8 @@ exports.Prisma.ModelName = {
   Facture: 'Facture',
   ItemSolaire: 'ItemSolaire',
   Pack: 'Pack',
+  ProjectType: 'ProjectType',
+  Project: 'Project',
   FileGroup: 'FileGroup',
   File: 'File'
 };

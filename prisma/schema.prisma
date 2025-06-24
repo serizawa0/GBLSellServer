@@ -88,12 +88,27 @@ model Pack{
   intitule String
 }
 
+model ProjectType{
+  id Int @id @default(autoincrement())
+  typeName String
+  projects Project[]
+}
+model Project{
+  id Int @id @default(autoincrement())
+  client String
+  typeId Int
+  type ProjectType @relation(fields: [typeId], references: [id], onDelete: Cascade)
+  filegroups FileGroup[]
+  createdAt DateTime @default(now())
+}
+
 model FileGroup{
   id        Int @id @default(autoincrement())
   name      String
   files     File[]
   createdAt DateTime @default(now())
-  
+  projectId Int 
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model File{
