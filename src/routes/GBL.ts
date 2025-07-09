@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { Request, Response, Router, Express } from "express";
 import { Socket, Server as SocketIOServer } from 'socket.io';
 import { createGroup, getGroupsOfUser, getUsers, logInApp, submtUser } from "../controllers/GBLController";
 import { approuverFacture, getFactures, submitfacture, validateFacture } from "../controllers/subControllers/CaisseController";
@@ -7,9 +7,14 @@ import User from "../classes/User";
 import { ok } from "assert";
 import { getPrivateMessages } from "../controllers/subControllers/ChatController";
 import Utilisateur from "../classes/Utilisateur";
-import { createProject, getProjects, getProjectTypes } from "../controllers/subControllers/ProjectController";
+import { createFileGroup, createProject, getFileGroups, getProjects, getProjectTypes } from "../controllers/subControllers/ProjectController";
+import { entree, getArticles, sortie, subArticle } from "../controllers/subControllers/StockController";
+import multer from "multer";
+import { getFile, removeFile, subFiles } from "../controllers/subControllers/FileController";
 
 let users:User[] = []
+
+const upload = multer({ storage:multer.memoryStorage() })
 
 const prisma = new PrismaClient()
 
@@ -135,19 +140,107 @@ export default function Gblrouter(io: SocketIOServer) {
 
     router.post('/createProject', (req:Request,res:Response)=> {
         console.log(req.body.typeId+' '+req.body.client);
-        
-        // createProject(req.body.typeId, req.body.client).then(
-        //     data => {
-        //         res.json({data})
-        //     }
-        // )
+        const ti = parseInt(req.body.typeId)
+        createProject(ti, req.body.client).then(
+            data => {
+                res.json((data))
+            }
+        )
+    })
+
+    router.post('/getFileGroups', (req:Request,res:Response) => {
+        console.log(req.body);
+        getFileGroups(req.body.id).then(data => {
+            res.json((data))
+        })
     })
 
     router.post('/createFileGroup', (req:Request,res:Response)=> {
-        console.log(req.body.data);
-        res.json({
-            data:'okay'
+        console.log(req.body);
+        createFileGroup(req.body.projectId, req.body.name).then(data => {
+            res.json((data))
         })
     })
+
+    router.get('/getArticles', (req:Request,res:Response)=> {
+        getArticles().then(data => {
+            res.json((data))
+        })
+    })
+    router.post('/subArticle', (req:Request,res:Response)=> {
+        console.log(req.body);
+        subArticle(req.body.libele,req.body.nombre,req.body.unite).then(
+            data => res.json((data))
+        )
+    })
+    router.post('/entreeArticle', (req:Request,res:Response)=> {
+        console.log(req.body);
+        const liste:{id:number,nombre:number}[] = req.body
+        const promises = liste.map(element=> entree(element.id,element.nombre))
+        Promise.all(promises).then(results=> {
+            results.forEach(data => console.log(data))
+            return getArticles()
+        }).then(data => res.json((data)))
+        .catch(error=> {
+            console.log(error);
+            res.status(500).send('error')
+        })
+    })
+    router.post('/sortieArticle', (req:Request,res:Response)=> {
+        console.log(req.body);
+        const liste:{id:number,nombre:number}[] = req.body
+        const promises = liste.map(element=> sortie(element.id,element.nombre))
+        Promise.all(promises).then(results=> {
+            results.forEach(data => console.log(data))
+            return getArticles()
+        }).then(data => res.json((data)))
+        .catch(error => {
+            console.log(error);
+            res.status(500).send('erreur')
+        })
+    })
+    router.post('/getFile', (req:Request,res:Response) => {
+        console.log(req.body)
+        const id = req.body.id
+        getFileGroups(id).then(data => {
+            // res.
+        })
+    })
+    router.post('/subFiles', upload.array('files') , (req:Request,res:Response) => {
+        try {
+            const files = req.files as Express.Multer.File[]
+            const groupid = parseInt(req.body.groupId)
+            // console.log(files);
+            // console.log(groupid);
+            
+            
+            subFiles(files,groupid).then(data => {
+                res.json((data))
+            })
+        } catch (error) {
+            
+        }
+    })
+    router.post('/afficheFile', (req:Request,res:Response) => {
+        getFile(req.body.id).then(file => {
+            if(file){
+                res.setHeader('Content-Type', file.mimeType);
+                res.setHeader('Content-Disposition', `inline; filename="${file.name}"`);
+                res.send(file.data);
+            }
+            else{
+                res.status(400)
+            }
+        })
+    })
+
+    router.post('/deleteFile', (req:Request,res:Response) => {
+        const id = req.body.id
+        const groupId = req.body.groupId
+        removeFile(id,groupId).then(element => {
+            res.json((element))
+        })
+    })
+
     return router;
 }

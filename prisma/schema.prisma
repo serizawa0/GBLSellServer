@@ -122,3 +122,10 @@ model File{
   group      FileGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
 }
 
+
+model Article{
+  id Int @id @default(autoincrement())
+  libele String
+  unite String
+  nombre Int
+}

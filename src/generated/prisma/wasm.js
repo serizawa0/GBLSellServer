@@ -204,6 +204,13 @@ exports.Prisma.FileScalarFieldEnum = {
   groupId: 'groupId'
 };
 
+exports.Prisma.ArticleScalarFieldEnum = {
+  id: 'id',
+  libele: 'libele',
+  unite: 'unite',
+  nombre: 'nombre'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -232,7 +239,8 @@ exports.Prisma.ModelName = {
   ProjectType: 'ProjectType',
   Project: 'Project',
   FileGroup: 'FileGroup',
-  File: 'File'
+  File: 'File',
+  Article: 'Article'
 };
 
 /**

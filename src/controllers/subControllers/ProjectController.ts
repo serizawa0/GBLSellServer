@@ -22,6 +22,41 @@ export const createProject = async (typeId:number, client:string) => {
             type:true
         }
     })
-    const projects = await prisma.project.findMany()
+    const projects = await prisma.project.findMany({
+        orderBy:{
+            createdAt:"desc"
+        }
+    })
     return projects
+}
+
+export const getFileGroups = async (id:number) => {
+    const fileGroups = await prisma.fileGroup.findMany({
+        where:{
+            projectId:id
+        },
+        include:{
+            files:true
+        }
+    })
+    return fileGroups
+}
+
+export const createFileGroup = async (id:number, name:string) => {
+    await prisma.fileGroup.create({
+        data: {
+            name:name,
+            projectId:id
+        }
+    })
+    const fileGroups  = await prisma.fileGroup.findMany({
+        where:{
+            projectId:id
+        },
+        orderBy:{id:"asc"},
+        include:{
+            files:true
+        }
+    })
+    return fileGroups
 }
