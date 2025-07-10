@@ -238,7 +238,7 @@ export default function Gblrouter(io: SocketIOServer) {
         const id = req.body.id
         const groupId = req.body.groupId
         removeFile(id,groupId).then(element => {
-            res.json((element))
+            res.json(element)
         })
     })
 

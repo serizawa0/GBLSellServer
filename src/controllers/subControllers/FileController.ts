@@ -63,7 +63,7 @@ export const removeFile = async (id:number, groupId:number) => {
             id:id
         }
     })
-    const group = await prisma.fileGroup.findMany({
+    const group = await prisma.fileGroup.findUnique({
         where:{
             id:groupId
         },
@@ -72,4 +72,13 @@ export const removeFile = async (id:number, groupId:number) => {
         }
     })
     return group
+    
+    // const file = await prisma.file.findUnique({
+    //     where:{
+    //         id:id
+    //     }
+    // })
+    // if (file) {
+    //     console.log(file.id+' '+groupId)
+    // }
 }
